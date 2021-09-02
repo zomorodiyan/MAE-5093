@@ -74,7 +74,8 @@ def main():
     fig1 = plt.figure()
     plt.style.use('seaborn-whitegrid')
     plt.plot(x,y1,'r'); plt.plot(x,y2,'b')
-    axes = plt.gca(); axes.set_ylim([-5,5])
+    plt.legend(["plot of example_1.1","20th order lagrange_curve"])
+    axes = plt.gca(); axes.set_ylim([-3,3])
     fig1.savefig('1_b')
     print('question 1 (b) figure saved in code directory')
 
@@ -97,7 +98,7 @@ def main():
     plt.plot(xplot,ylagrange,'r',linewidth=2)
     plt.plot(xplot,yspline,'b--',linewidth=2)
     plt.plot(x,lagrange(x,dat),'ro')
-    plt.plot(dat[:,0],dat[:,1],'*',linewidth=15)
+    plt.plot(dat[:,0],dat[:,1],'*w',linewidth=15)
     plt.legend(["intuitive_interpolation"\
             ,"cubic_spline_exterpolation_at_2009", "lagrange_curve"\
             ,"cubic_spline_curve","lagrange_exterpolation_at_2009"\
@@ -107,26 +108,33 @@ def main():
     dat2 = np.array([[1993,12.0],[1995,12.7],[1997,13]\
             ,[1999,15.2],[2001,18.2],[2003,19.8],[2005,24.1]\
             ,[2007,28.1]])
-    #dat.sort(key=lambda x: x[0])
     fig3 = plt.figure()
     plt.style.use('seaborn-whitegrid')
-    plt.plot(dat2[:,0],dat2[:,1],'#B8B8B8',linewidth=8)
     x = 2009
-    plt.plot(x,cubic_spline(x,dat2),'bo')
     xplot = np.arange(1992,x+0.1,0.1)
     ylagrange = np.empty(xplot.shape[0])
-    yspline = np.empty(xplot.shape[0])
     for i in range(xplot.shape[0]):
         ylagrange[i] = lagrange(xplot[i],dat2)
-        yspline[i] = cubic_spline(xplot[i],dat2)
-    plt.plot(xplot,ylagrange,'r',linewidth=2)
-    plt.plot(xplot,yspline,'b--',linewidth=2)
+    plt.plot(xplot,ylagrange,linewidth=2)
     plt.plot(x,lagrange(x,dat2),'ro')
     plt.plot(dat2[:,0],dat2[:,1],'*',linewidth=15)
-    plt.legend(["intuitive_interpolation"\
-            ,"cubic_spline_exterpolation_at_2009", "lagrange_curve"\
-            ,"cubic_spline_curve","lagrange_exterpolation_at_2009"\
+    plt.legend(["lagrange_curve","lagrange_exterpolation_at_2009"\
             ,"real_data"] , loc='lower left')
-    fig3.savefig('8')
+    fig3.savefig('8_a')
+
+    dat3 = np.copy(np.concatenate((dat2[:2,:],dat2[4:,:]),axis=0))
+    yspline = np.empty(xplot.shape[0])
+    for i in range(xplot.shape[0]):
+        ylagrange[i] = lagrange(xplot[i],dat3)
+        yspline[i] = cubic_spline(xplot[i],dat3)
+
+    fig4 = plt.figure()
+    plt.style.use('seaborn-whitegrid')
+    plt.plot(xplot,ylagrange,linewidth=2)
+    plt.plot(xplot,yspline,'g--',linewidth=2)
+    plt.plot(dat2[:,0],dat2[:,1],'*r',linewidth=15)
+    plt.legend(["lagrange_curve","cubic_spline_curve"\
+            ,"real_data"] , loc='upper left')
+    fig4.savefig('8_bc')
 
 main()
