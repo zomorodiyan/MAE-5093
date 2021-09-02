@@ -11,8 +11,6 @@ def lagrange(x,points):
                 tmp *= (x-points[i,0])/(points[j,0]-points[i,0])
         sum += points[j,1]*tmp
     return sum
-#points = np.array([[0.0,0.0],[1.0,1.0],[3.0,2.0]])
-#print('question 1 test! it should be -0.226 and it is: ', lagrange(x,points))
 
 def tdma(a,b,c,d):
 
@@ -86,11 +84,6 @@ def main():
     D[0] = 0; D[-1] = 0
 
     G2nd = tdma(A,B,C,D)
-    print('A', A[-3:])
-    print('B', B[-3:])
-    print('C', C[-3:])
-    print('D', D[-3:])
-    print('G2nd ',G2nd[0:3])
 
     x = 2010
     interval = -1
@@ -100,7 +93,6 @@ def main():
             break
     if interval == -1:
         interval = dat.shape[0]-2
-    print('interval',interval)
     A = (dat[interval+1,0]-x)/(dat[interval+1,0]-dat[interval,0])
     B = 1 - A
     C = 1/6*(np.power(A,3)-A)*np.power((dat[interval+1,0]-dat[interval,0]),2)
