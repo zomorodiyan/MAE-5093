@@ -10,8 +10,7 @@ equaly distanced points on the smooth Runge's curve"
 ### Question 2 
 I thought about the chain law and came up with the solution which you can see
 below.
-
-<img src="./2.jpg?raw=true" width="500">
+[fig 1_b](https://latex.codecogs.com/gif.latex?%5Csum_%7Bk%3D0%7D%5E%7Bn%7D%5Cleft%20%28%20y_%7Bk%7D%5Csum_%7Bj%3D0%2Cj%5Cneq%20k%7D%5E%7Bn%7D%5Cleft%20%28%20%5Cdisplaystyle%20%5Cfrac%7B1%7D%7Bx_%7Bk%7D-x%7Bj%7D%7D%5Cprod_%7Bi%3D0%2Ci%5Cneq%20j%2C%20i%5Cneq%20k%7D%5E%7Bn%7D%5Cfrac%7Bx-x_%7Bi%7D%7D%7Bx_%7Bk%7D-x_%7Bi%7D%7D%20%5Cright%20%29%20%5Cright%20%29)
 
 ### Question 7 
 (a,b,c) Becouse of large error in results I conclude that the global \
