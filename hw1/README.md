@@ -5,4 +5,5 @@
 ### Question 4 
 
 <!-- Images -->
-![Markdown Logo](https://github.com/zomorodiyan/MAE-5093/tree/main/hw1/1_b.png)
+![Alt text](./1_b.png?raw=true "some title")
+
