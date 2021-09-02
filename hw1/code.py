@@ -13,7 +13,6 @@ def lagrange(x,points):
     return sum
 
 def tdma(a,b,c,d):
-
     ac, bc, cc, dc = map(np.array, (a, b, c, d))
     ne = len(d)
     for i in range(1,ne):
@@ -21,13 +20,39 @@ def tdma(a,b,c,d):
         dc[i] = dc[i] - ac[i]*(dc[i-1]/bc[i-1])
     uc = bc
     uc[-1] = dc[-1]/bc[-1]
-
     for i in range(ne-2,-1,-1):
         uc[i] = (dc[i] - cc[i]*uc[i+1])/bc[i]
-
     del ac, bc, cc, dc
-
     return uc
+
+def cubic_spline(x,dat):
+    delta=np.copy(dat[1:,0]-dat[0:-1,0])
+    A = np.empty(dat.shape[0]); B = np.empty(dat.shape[0])
+    C = np.empty(dat.shape[0]); D = np.empty(dat.shape[0])
+    A[1:-1] = np.copy(delta[:-1]/6)
+    B[1:-1] = np.copy((delta[:-1]+delta[1:])/3)
+    C[1:-1] = np.copy(delta[1:]/6)
+    D[1:-1] = np.copy((dat[2:,1]-dat[1:-1,1])/delta[1:]\
+            -(dat[1:-1,1]-dat[:-2,1])/delta[:-1])
+    A[0] = 0; A[-1] = 0
+    B[0] = 1; B[-1] = 1
+    C[0] = 0; C[-1] = 0
+    D[0] = 0; D[-1] = 0
+
+    G2nd = tdma(A,B,C,D)
+
+    interval = dat.shape[0]-2
+    for i in range(1,dat.shape[0]):
+        if x < dat[i,0]:
+            interval = i-1
+            break
+    A = (dat[interval+1,0]-x)/(dat[interval+1,0]-dat[interval,0])
+    B = 1 - A
+    C = 1/6*(np.power(A,3)-A)*np.power((dat[interval+1,0]-dat[interval,0]),2)
+    D = 1/6*(np.power(B,3)-B)*np.power((dat[interval+1,0]-dat[interval,0]),2)
+    y = A*dat[interval,1] + B*dat[interval+1,1] + C*G2nd[interval]
+    + D*G2nd[interval+1]
+    return y
 
 def main():
 #------------------------------question 1----------------------------------
@@ -57,49 +82,51 @@ def main():
     dat = np.array([[1998,21300],[1999,23057],[2000,24441]\
             ,[2001,25917],[2002,27204],[2003,28564],[2004,29847]\
             ,[2005,31200],[2006,32994],[2007,34800],[2008,36030]])
+
     fig2 = plt.figure()
     plt.style.use('seaborn-whitegrid')
-    plt.plot(dat[:,0],dat[:,1])
-    fig2.savefig('7_a')
-
-#---------------------------j---question 8----------------------------------
+    plt.plot(dat[:,0],dat[:,1],'#B8B8B8',linewidth=8)
+    x = 2010
+    plt.plot(x,cubic_spline(x,dat),'bo')
+    xplot = np.arange(1997.5,2010.1,0.1)
+    ylagrange = np.empty(xplot.shape[0])
+    yspline = np.empty(xplot.shape[0])
+    for i in range(xplot.shape[0]):
+        ylagrange[i] = lagrange(xplot[i],dat)
+        yspline[i] = cubic_spline(xplot[i],dat)
+    plt.plot(xplot,ylagrange,'r',linewidth=2)
+    plt.plot(xplot,yspline,'b--',linewidth=2)
+    plt.plot(x,lagrange(x,dat),'ro')
+    plt.plot(dat[:,0],dat[:,1],'*',linewidth=15)
+    plt.legend(["intuitive_interpolation"\
+            ,"cubic_spline_exterpolation_at_2009", "lagrange_curve"\
+            ,"cubic_spline_curve","lagrange_exterpolation_at_2009"\
+            ,"real_data"] , loc='upper left')
+    fig2.savefig('7')
+#------------------------------question 8----------------------------------
     dat2 = np.array([[1993,12.0],[1995,12.7],[1997,13]\
             ,[1999,15.2],[2001,18.2],[2003,19.8],[2005,24.1]\
             ,[2007,28.1]])
-    x = 2009
-
     #dat.sort(key=lambda x: x[0])
-
-    delta=np.copy(dat[1:,0]-dat[0:-1,0])
-    A = np.empty(dat.shape[0]); B = np.empty(dat.shape[0])
-    C = np.empty(dat.shape[0]); D = np.empty(dat.shape[0])
-    A[1:-1] = np.copy(delta[:-1]/6)
-    B[1:-1] = np.copy((delta[:-1]+delta[1:])/3)
-    C[1:-1] = np.copy(delta[1:]/6)
-    D[1:-1] = np.copy((dat[2:,1]-dat[1:-1,1])/delta[1:]\
-            -(dat[1:-1,1]-dat[:-2,1])/delta[:-1])
-    A[0] = 0; A[-1] = 0
-    B[0] = 1; B[-1] = 1
-    C[0] = 0; C[-1] = 0
-    D[0] = 0; D[-1] = 0
-
-    G2nd = tdma(A,B,C,D)
-
-    x = 2010
-    interval = -1
-    for i in range(dat.shape[0]):
-        if x < dat[i,0]:
-            interval = i
-            break
-    if interval == -1:
-        interval = dat.shape[0]-2
-    A = (dat[interval+1,0]-x)/(dat[interval+1,0]-dat[interval,0])
-    B = 1 - A
-    C = 1/6*(np.power(A,3)-A)*np.power((dat[interval+1,0]-dat[interval,0]),2)
-    D = 1/6*(np.power(B,3)-B)*np.power((dat[interval+1,0]-dat[interval,0]),2)
-    y = A*dat[interval,1] + B*dat[interval+1,1] + C*G2nd[interval]
-    + D*G2nd[interval+1]
-    print('y ',y)
-
+    fig3 = plt.figure()
+    plt.style.use('seaborn-whitegrid')
+    plt.plot(dat2[:,0],dat2[:,1],'#B8B8B8',linewidth=8)
+    x = 2009
+    plt.plot(x,cubic_spline(x,dat2),'bo')
+    xplot = np.arange(1992,x+0.1,0.1)
+    ylagrange = np.empty(xplot.shape[0])
+    yspline = np.empty(xplot.shape[0])
+    for i in range(xplot.shape[0]):
+        ylagrange[i] = lagrange(xplot[i],dat2)
+        yspline[i] = cubic_spline(xplot[i],dat2)
+    plt.plot(xplot,ylagrange,'r',linewidth=2)
+    plt.plot(xplot,yspline,'b--',linewidth=2)
+    plt.plot(x,lagrange(x,dat2),'ro')
+    plt.plot(dat2[:,0],dat2[:,1],'*',linewidth=15)
+    plt.legend(["intuitive_interpolation"\
+            ,"cubic_spline_exterpolation_at_2009", "lagrange_curve"\
+            ,"cubic_spline_curve","lagrange_exterpolation_at_2009"\
+            ,"real_data"] , loc='lower left')
+    fig3.savefig('8')
 
 main()
