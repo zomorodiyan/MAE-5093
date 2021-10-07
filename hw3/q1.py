@@ -39,9 +39,10 @@ for name in names:
         for i in range(n-1):
             y[i+1] = step(name,x[i],y[i],dx)
         plt.plot(x,y)
-    plt.legend(['1.0', '0.5', '0.1'])
+    plt.legend(['dx=1.0', 'dx=0.5', 'dx=0.1'])
     plt.gca().set_ylim([-0.25,1.25])
-    plt.savefig('plot/1-'+name+'.png')
     plt.title(name)
-    plt.show()
-
+    plt.savefig('plot/1-'+name+'.png')
+    #plt.show()
+    plt.clf()
+    print('1-'+name+'.png is saved in ./plot')

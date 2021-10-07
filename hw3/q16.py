@@ -1,5 +1,8 @@
 import numpy as np
+import time
 import matplotlib.pyplot as plt
+import imageio
+import os
 
 sigma = 10.0; b = 8/3 # r: control parameter, r>24.74 => kaotic
 #ODEz: x'=sigma*(y-x), y'=rx-y-xz, z'=xy-bz
@@ -16,8 +19,7 @@ def plotc(par1,par2,t,name):
     plt.plot(t,par1); plt.plot(t,par2); plt.legend([name+'1',name+'2'])
     plt.title(name+' evolutions in time')
     plt.savefig('plot/16-c-'+name)
-    plt.show()
-    print('16-c'+name+'.png is saved in ./plot')
+    #plt.show()
     plt.clf()
 
 def step(xi,yi,zi,dt):
@@ -38,7 +40,7 @@ def step(xi,yi,zi,dt):
            ,zi + 1/6*k1z + 1/3*(k2z+k3z) + 1/6*k4z]
 
 start = 0; finish = 25
-dt = 0.1
+dt = 0.01
 n = int((finish-start)/dt)+1
 x = np.empty(n); y = np.empty(n); z = np.empty(n)
 t = np.linspace(0,25,n)
@@ -72,4 +74,40 @@ for i in range(n-1):
 plotc(x,x2,t,'x'); plotc(y,y2,t,'y'); plotc(z,z2,t,'z')
 
 
+# Data for a three-dimensional line
+# Data for three-dimensional scattered points
+npoints = 201
+tz = np.linspace(0,1,npoints)*n
+filenames = []
+for i in range(npoints-1):
+    ax = plt.axes(projection='3d')
+    ax.plot3D(x[:int(tz[i])], y[:int(tz[i])], z[:int(tz[i])], color=(0.8,0.3,0.3))
+    ax.plot3D(x2[:int(tz[i])], y2[:int(tz[i])], z2[:int(tz[i])], color=(0.3,0.3,0.8))
+    ax.scatter3D(x[int(tz[i])], y[int(tz[i])], z[int(tz[i])],
+            color=(0.7,0.0,0.3), s=40)
+    ax.scatter3D(x2[int(tz[i])], y2[int(tz[i])], z2[int(tz[i])],
+            color=(0.0,0.3,0.7), s=40)
+    ax.set_xlabel('X axis')
+    ax.set_ylabel('Y axis')
+    ax.set_zlabel('Z axis')
+    ax.text2D(0.05, 0.85, "Lorenz", transform=ax.transAxes)
+    ax.legend(['initial: (6,6,6)', 'initial: (6,6.01,6)'])
+    #plt.show()
+    filename = 'plot/gif/'+str(i)+'.png'
+    ax.axes.set_xlim3d(left=-20, right=18)
+    ax.axes.set_ylim3d(bottom=-25, top=25)
+    ax.axes.set_zlim3d(bottom=0, top=38)
+    plt.savefig(filename)
+    plt.close()
+    filenames.append(filename)
+    print(i)
 
+# build gif
+with imageio.get_writer('16-c.gif', mode='I') as writer:
+    for filename in filenames:
+        image = imageio.imread(filename)
+        writer.append_data(image)
+
+# Remove files
+for filename in set(filenames):
+    os.remove(filename)
